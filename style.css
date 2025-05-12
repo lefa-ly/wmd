@@ -821,3 +821,35 @@ h1, h2, h3, h4, h5, h6 {
         justify-content: center;
     }
 }
+/* Add these styles to auth.css */
+.dropdown-toggle::after {
+    margin-left: 0.5em;
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+    padding: 0.5rem 1.5rem;
+    color: #5d4037;
+}
+
+.dropdown-item:hover {
+    background-color: #f9f3e9;
+    color: #5d4037;
+}
+
+.dropdown-divider {
+    border-color: rgba(93, 64, 55, 0.1);
+}
+
+.navbar .dropdown-menu {
+    margin-top: 0.5rem;
+}
+
+.fa-user-circle {
+    font-size: 1.2em;
+    margin-right: 0.3em;
+}
