@@ -21,7 +21,7 @@ body {
 
 header {
     background-color:transparent /* Dark brown */
-    background-image: linear-gradient (rgba (0,0,0,0,5), rgba(0,0,0,0,5), rgba (0,0,0,0,5)), url ("background.png"), height: 100vh;
+    background-image: linear-gradient (rgba (0,0,0,0,5), rgba(0,0,0,0,5), rgba (0,0,0,0,5)), url ("background2.png"), height: 100vh;
     color: white;
     padding: 1rem 0;
     position: sticky;
