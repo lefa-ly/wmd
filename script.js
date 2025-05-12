@@ -1,4 +1,4 @@
-// main.js - BAACafe Website Functionality (for all pages except order.html)
+// main.js - BAACafe Website Functionality 
 
 document.addEventListener('DOMContentLoaded', function() {
     // ======================
