@@ -366,3 +366,256 @@ notificationStyle.textContent = `
     }
 `;
 document.head.appendChild(notificationStyle);
+// Auth Application - React-like functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // State management
+    const state = {
+        currentView: 'login', // 'login' or 'signup'
+        users: JSON.parse(localStorage.getItem('baacafe-users')) || [],
+        currentUser: null,
+        notification: null
+    };
+
+    // DOM Elements
+    const authContainer = document.getElementById('authApp');
+    
+    // Render function (like React's render)
+    function render() {
+        authContainer.innerHTML = '';
+        
+        if (state.currentUser) {
+            renderDashboard();
+        } else {
+            if (state.currentView === 'login') {
+                renderLogin();
+            } else {
+                renderSignup();
+            }
+        }
+        
+        if (state.notification) {
+            renderNotification();
+        }
+    }
+    
+    // Render login form
+    function renderLogin() {
+        authContainer.innerHTML = `
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>Welcome Back</h2>
+                    <p>Sign in to your BAACafe account</p>
+                </div>
+                <div class="auth-body">
+                    <form id="loginForm">
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="loginEmail" placeholder="name@example.com" required>
+                            <label for="loginEmail">Email address</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="loginPassword" placeholder="Password" required>
+                            <label for="loginPassword">Password</label>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rememberMe">
+                                <label class="form-check-label" for="rememberMe">Remember me</label>
+                            </div>
+                            <a href="#" id="forgotPassword" class="text-decoration-none">Forgot password?</a>
+                        </div>
+                        <button type="submit" class="btn btn-auth btn-primary mb-3">Login</button>
+                    </form>
+                    <div class="auth-footer">
+                        Don't have an account? <span class="auth-link" id="switchToSignup">Sign up</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add event listeners
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
+        document.getElementById('switchToSignup').addEventListener('click', () => {
+            state.currentView = 'signup';
+            render();
+        });
+    }
+    
+    // Render signup form
+    function renderSignup() {
+        authContainer.innerHTML = `
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>Join BAACafe</h2>
+                    <p>Create your account to get started</p>
+                </div>
+                <div class="auth-body">
+                    <form id="signupForm">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="signupName" placeholder="Full Name" required>
+                            <label for="signupName">Full Name</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="signupEmail" placeholder="name@example.com" required>
+                            <label for="signupEmail">Email address</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="signupPassword" placeholder="Password" required minlength="6">
+                            <label for="signupPassword">Password (min 6 characters)</label>
+                        </div>
+                        <div class="form-floating mb-4">
+                            <input type="password" class="form-control" id="signupConfirm" placeholder="Confirm Password" required>
+                            <label for="signupConfirm">Confirm Password</label>
+                        </div>
+                        <button type="submit" class="btn btn-auth btn-primary mb-3">Create Account</button>
+                    </form>
+                    <div class="auth-footer">
+                        Already have an account? <span class="auth-link" id="switchToLogin">Login</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add event listeners
+        document.getElementById('signupForm').addEventListener('submit', handleSignup);
+        document.getElementById('switchToLogin').addEventListener('click', () => {
+            state.currentView = 'login';
+            render();
+        });
+    }
+    
+    // Render user dashboard
+    function renderDashboard() {
+        authContainer.innerHTML = `
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>Welcome, ${state.currentUser.name}!</h2>
+                    <p>Your BAACafe account dashboard</p>
+                </div>
+                <div class="auth-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-user-circle fa-5x text-muted"></i>
+                    </div>
+                    <p class="mb-4">You're logged in as <strong>${state.currentUser.email}</strong></p>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" id="viewProfile">View Profile</button>
+                        <button class="btn btn-outline-secondary" id="logout">Logout</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add event listeners
+        document.getElementById('logout').addEventListener('click', handleLogout);
+    }
+    
+    // Render notification
+    function renderNotification() {
+        const notification = document.createElement('div');
+        notification.className = `notification ${state.notification.type}`;
+        notification.textContent = state.notification.message;
+        notification.classList.add('show');
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                document.body.removeChild(notification);
+                state.notification = null;
+            }, 300);
+        }, 3000);
+    }
+    
+    // Show notification
+    function showNotification(message, type = 'success') {
+        state.notification = { message, type };
+        render();
+    }
+    
+    // Event handlers
+    function handleLogin(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const rememberMe = document.getElementById('rememberMe').checked;
+        
+        // Find user
+        const user = state.users.find(u => u.email === email && u.password === password);
+        
+        if (user) {
+            state.currentUser = user;
+            
+            // Store in localStorage if "Remember me" is checked
+            if (rememberMe) {
+                localStorage.setItem('baacafe-currentUser', JSON.stringify(user));
+            } else {
+                sessionStorage.setItem('baacafe-currentUser', JSON.stringify(user));
+            }
+            
+            showNotification('Login successful! Redirecting...');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        } else {
+            showNotification('Invalid email or password', 'error');
+        }
+    }
+    
+    function handleSignup(e) {
+        e.preventDefault();
+        
+        const name = document.getElementById('signupName').value;
+        const email = document.getElementById('signupEmail').value;
+        const password = document.getElementById('signupPassword').value;
+        const confirmPassword = document.getElementById('signupConfirm').value;
+        
+        // Validate
+        if (password !== confirmPassword) {
+            showNotification('Passwords do not match', 'error');
+            return;
+        }
+        
+        // Check if user exists
+        if (state.users.some(u => u.email === email)) {
+            showNotification('Email already registered', 'error');
+            return;
+        }
+        
+        // Create new user
+        const newUser = {
+            id: Date.now().toString(),
+            name,
+            email,
+            password,
+            joinDate: new Date().toISOString()
+        };
+        
+        state.users.push(newUser);
+        localStorage.setItem('baacafe-users', JSON.stringify(state.users));
+        
+        showNotification('Account created successfully! Please login.');
+        state.currentView = 'login';
+        render();
+    }
+    
+    function handleLogout() {
+        state.currentUser = null;
+        localStorage.removeItem('baacafe-currentUser');
+        sessionStorage.removeItem('baacafe-currentUser');
+        state.currentView = 'login';
+        showNotification('Logged out successfully');
+        render();
+    }
+    
+    // Check for existing session on load
+    function checkSession() {
+        const storedUser = localStorage.getItem('baacafe-currentUser') || sessionStorage.getItem('baacafe-currentUser');
+        if (storedUser) {
+            state.currentUser = JSON.parse(storedUser);
+        }
+    }
+    
+    // Initialize
+    checkSession();
+    render();
+});
