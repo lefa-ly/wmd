@@ -619,34 +619,3 @@ document.addEventListener('DOMContentLoaded', function() {
     checkSession();
     render();
 });
- document.addEventListener('DOMContentLoaded', function() {
-        const user = JSON.parse(localStorage.getItem('baacafe-currentUser') || 
-                     sessionStorage.getItem('baacafe-currentUser'));
-        
-        if (!user) {
-            window.location.href = 'auth.html';
-            return;
-        }
-        
-        const profileInfo = document.getElementById('profileInfo');
-        profileInfo.innerHTML = `
-            <div class="mb-3">
-                <h5 class="text-muted">Full Name</h5>
-                <p class="fs-5">${user.name}</p>
-            </div>
-            <div class="mb-3">
-                <h5 class="text-muted">Email</h5>
-                <p class="fs-5">${user.email}</p>
-            </div>
-            <div class="mb-3">
-                <h5 class="text-muted">Member Since</h5>
-                <p class="fs-5">${new Date(user.joinDate).toLocaleDateString()}</p>
-            </div>
-        `;
-        
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            localStorage.removeItem('baacafe-currentUser');
-            sessionStorage.removeItem('baacafe-currentUser');
-            window.location.href = 'index.html';
-        });
-    });
